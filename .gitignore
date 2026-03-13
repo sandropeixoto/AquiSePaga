@@ -7,6 +7,14 @@
 *.key
 *.pem
 
+# Database
+# Ignora arquivos de banco em geral, mas permite o banco principal do projeto
+# para portabilidade entre máquinas (projeto privado)
+*.db
+*.sqlite
+*.sqlite3
+!aquisepaga.db
+
 # Dependencies (AIOX)
 node_modules/
 node_modules
@@ -21,7 +29,11 @@ logs/
 .DS_Store
 Thumbs.db
 .idea/
+.vscode/
 *.swp
+
+# Configuration Examples
+!.env.example
 
 # AIOX Local (AIOX)
 .aiox-core/local/
