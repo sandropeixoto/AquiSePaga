@@ -1,0 +1,92 @@
+storyId: "STORY-001"
+createdAt: "2026-03-13T10:35:00Z"
+createdBy: "@architect"
+status: pending
+complexity: STANDARD
+estimatedEffort: "4-6 hours"
+
+dependencies:
+  - name: express
+    version: "latest"
+    purpose: "Backend API framework"
+  - name: sqlite3
+    version: "latest"
+    purpose: "Local database engine"
+
+phases:
+  - id: phase-1
+    name: "Setup & Database"
+    description: "Configuração inicial do projeto e esquema do banco de dados"
+    subtasks:
+      - id: "1.1"
+        description: "Inicializar projeto Node.js e instalar dependências"
+        service: infra
+        files:
+          - package.json
+        verification:
+          type: command
+          command: "npm install express sqlite3 cors"
+        status: pending
+
+      - id: "1.2"
+        description: "Configurar schema SQLite (tabelas people e transactions)"
+        service: database
+        files:
+          - db.js
+        verification:
+          type: command
+          command: "node db.js --init"
+        status: pending
+
+  - id: phase-2
+    name: "Backend API"
+    description: "Implementação das rotas REST para gestão de dívidas"
+    subtasks:
+      - id: "2.1"
+        description: "Criar servidor Express e rotas CRUD de Pessoas"
+        service: backend
+        files:
+          - server.js
+        verification:
+          type: api
+          url: "http://localhost:3000/api/people"
+          method: "GET"
+          expectedStatus: 200
+        status: pending
+
+      - id: "2.2"
+        description: "Implementar lógica de Transações (débito/crédito) e cálculo de saldo"
+        service: backend
+        files:
+          - server.js
+        verification:
+          type: api
+          url: "http://localhost:3000/api/transactions"
+          method: "POST"
+          expectedStatus: 201
+        status: pending
+
+  - id: phase-3
+    name: "Frontend Implementation"
+    description: "Interface web local para interação do usuário"
+    subtasks:
+      - id: "3.1"
+        description: "Desenvolver interface HTML/CSS (Dashboard de saldos)"
+        service: frontend
+        files:
+          - public/index.html
+          - public/style.css
+        verification:
+          type: manual
+          instructions: "Abrir index.html e verificar layout inicial"
+        status: pending
+
+      - id: "3.2"
+        description: "Implementar app.js para conectar UI com a API do Backend"
+        service: frontend
+        files:
+          - public/app.js
+        verification:
+          type: manual
+          instructions: "Realizar um lançamento de dívida e verificar atualização na tela"
+        status: pending

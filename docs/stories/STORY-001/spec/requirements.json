@@ -1,0 +1,90 @@
+{
+  "storyId": "STORY-001",
+  "gatheredAt": "2026-03-13T10:28:00Z",
+  "source": "user",
+  "gatheredBy": "@pm",
+  "elicitationVersion": "2.0",
+  "functional": [
+    {
+      "id": "FR-1",
+      "description": "Registrar pessoas que devem dinheiro (empréstimo ou gastos no cartão)",
+      "priority": "P0",
+      "rationale": "Base para gestão de cobranças",
+      "acceptance": ["Pessoa cadastrada com sucesso", "Lista de pessoas visível"]
+    },
+    {
+      "id": "FR-2",
+      "description": "Registrar contas/débitos realizados por outras pessoas",
+      "priority": "P0",
+      "rationale": "Registrar o valor original da dívida",
+      "acceptance": ["Débito registrado associado a uma pessoa", "Valor somado ao saldo devedor"]
+    },
+    {
+      "id": "FR-3",
+      "description": "Registrar pagamentos recebidos para amortização",
+      "priority": "P0",
+      "rationale": "Reduzir o saldo devedor da pessoa",
+      "acceptance": ["Pagamento registrado", "Saldo geral da pessoa atualizado via amortização do todo"]
+    },
+    {
+      "id": "FR-4",
+      "description": "Visualizar saldo devedor por pessoa de forma agrupada",
+      "priority": "P0",
+      "rationale": "Facilitar a cobrança e gestão",
+      "acceptance": ["Visão geral por pessoa apresentando o saldo líquido atual"]
+    },
+    {
+      "id": "FR-5",
+      "description": "Suporte a saldo credor (crédito)",
+      "priority": "P1",
+      "rationale": "Casos onde o pagamento excede a dívida",
+      "acceptance": ["Se pagamento > dívida, o saldo torna-se positivo (crédito) para a pessoa"]
+    }
+  ],
+  "nonFunctional": [
+    {
+      "id": "NFR-1",
+      "category": "reliability",
+      "description": "Persistência local e segura dos dados",
+      "metric": "Uso de SQLite como motor de banco de dados"
+    },
+    {
+      "id": "NFR-2",
+      "category": "usability",
+      "description": "Interface web Responsiva e Simples",
+      "metric": "Carregamento instantâneo em navegador local"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "CON-1",
+      "type": "technical",
+      "description": "Execução puramente local",
+      "impact": "Não deve depender de serviços de nuvem externos para o core"
+    },
+    {
+      "id": "CON-2",
+      "type": "technical",
+      "description": "Banco de dados SQLite",
+      "impact": "Single-file database para portabilidade"
+    }
+  ],
+  "domainModel": [
+    {
+      "entity": "Person",
+      "description": "Pessoa que realiza as contas ou recebe empréstimos",
+      "relationships": ["has many Transactions"]
+    },
+    {
+      "entity": "Transaction",
+      "description": "Registro de Débito (+) ou Pagamento (-)",
+      "relationships": ["belongs to Person"]
+    }
+  ],
+  "terminology": [
+    {
+      "term": "Amortização",
+      "definition": "Redução da dívida total através de pagamentos parciais ou totais."
+    }
+  ]
+}

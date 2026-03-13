@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquiSePaga - Gestão de Dívidas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 AquiSePaga</h1>
+            <p>Controle de gastos e amortização local</p>
+        </header>
+
+        <main>
+            <!-- Cadastro de Pessoa -->
+            <section class="card">
+                <h2>👤 Cadastrar Pessoa</h2>
+                <div class="row">
+                    <input type="text" id="personName" placeholder="Nome da pessoa">
+                    <button onclick="addPerson()">Adicionar</button>
+                </div>
+            </section>
+
+            <!-- Dashboard de Saldos -->
+            <section class="card">
+                <h2>📊 Resumo de Saldos</h2>
+                <div id="peopleList" class="people-grid">
+                    <!-- Gerado via JS -->
+                </div>
+            </section>
+
+            <!-- Registro de Transação (Modal ou formulário simples) -->
+            <section id="transactionSection" class="card hidden">
+                <h2 id="transTitle">Lançar para: <span></span></h2>
+                <div class="row">
+                    <input type="number" id="transAmount" placeholder="Valor (R$)">
+                    <select id="transType">
+                        <option value="debt">Dívida (+)</option>
+                        <option value="payment">Pagamento (-)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" id="transDesc" placeholder="Descrição (opcional)">
+                    <button class="btn-success" onclick="saveTransaction()">Registrar</button>
+                    <button class="btn-cancel" onclick="closeTransaction()">Cancelar</button>
+                </div>
+            </section>
+
+            <!-- Histórico Detalhado -->
+            <section id="historySection" class="card hidden">
+                <div class="header-with-action">
+                    <h2 id="historyTitle">Extrato de: <span></span></h2>
+                    <button class="btn-pdf" onclick="exportToPDF()">📑 Baixar PDF</button>
+                </div>
+                <div id="historyList">
+                    <!-- Gerado via JS -->
+                </div>
+                <div class="row" style="margin-top: 20px;">
+                    <button class="btn-cancel" onclick="closeHistory()">Fechar Extrato</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
