@@ -1,6 +1,19 @@
 const API = 'http://localhost:3000/api';
 let selectedPersonId = null;
 let selectedPersonName = '';
+let selectedPersonContact = ''; // Guardar para o PDF
+
+// Iniciar Máscara de Telefone
+document.addEventListener('DOMContentLoaded', () => {
+    const phoneInput = document.getElementById('personPhone');
+    if (phoneInput) {
+        IMask(phoneInput, { mask: '(00) 00000-0000' });
+    }
+    const editPhoneInput = document.getElementById('editPersonPhone');
+    if (editPhoneInput) {
+        IMask(editPhoneInput, { mask: '(00) 00000-0000' });
+    }
+});
 
 async function fetchPeople() {
     const res = await fetch(`${API}/people`);
@@ -17,15 +30,21 @@ function renderPeople(people) {
         div.className = 'person-card';
         const isDebt = p.balance > 0;
         
+        let contactInfo = '';
+        if (p.phone) contactInfo += `📱 ${p.phone} `;
+        if (p.email) contactInfo += `<br>📧 ${p.email}`;
+
         div.innerHTML = `
             <h3>${p.name}</h3>
+            ${contactInfo ? `<div class="contact-info">${contactInfo}</div>` : ''}
             <div class="balance ${isDebt ? 'debt' : 'credit'}">
                 R$ ${Math.abs(p.balance).toFixed(2)}
                 <small style="display:block; font-size: 0.7rem;">${isDebt ? '(Deve você)' : '(Você deve/Crédito)'}</small>
             </div>
             <div class="actions">
                 <button onclick="openTransaction(${p.id}, '${p.name}')">Lançar</button>
-                <button class="btn-info" onclick="viewHistory(${p.id}, '${p.name}')">Extrato</button>
+                <button class="btn-info" onclick="viewHistory(${p.id}, '${p.name}', '${p.phone || ''}', '${p.email || ''}')">Extrato</button>
+                <button class="btn-edit" onclick="openEdit(${JSON.stringify(p).replace(/"/g, '&quot;')})">✏️</button>
             </div>
         `;
         list.appendChild(div);
@@ -34,16 +53,24 @@ function renderPeople(people) {
 
 async function addPerson() {
     const nameInput = document.getElementById('personName');
+    const phoneInput = document.getElementById('personPhone');
+    const emailInput = document.getElementById('personEmail');
+    
     const name = nameInput.value;
+    const phone = phoneInput.value;
+    const email = emailInput.value;
+
     if (!name) return;
 
     await fetch(`${API}/people`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, phone, email })
     });
 
     nameInput.value = '';
+    phoneInput.value = '';
+    emailInput.value = '';
     fetchPeople();
 }
 
@@ -83,9 +110,10 @@ async function saveTransaction() {
     fetchPeople();
 }
 
-async function viewHistory(id, name) {
+async function viewHistory(id, name, phone, email) {
     selectedPersonId = id;
     selectedPersonName = name;
+    selectedPersonContact = (phone ? `WhatsApp: ${phone} ` : '') + (email ? `| Email: ${email}` : '');
     
     document.getElementById('historyTitle').querySelector('span').innerText = name;
     document.getElementById('historySection').classList.remove('hidden');
@@ -144,6 +172,38 @@ function closeHistory() {
     selectedPersonId = null;
 }
 
+function openEdit(person) {
+    document.getElementById('editPersonId').value = person.id;
+    document.getElementById('editPersonName').value = person.name;
+    document.getElementById('editPersonPhone').value = person.phone || '';
+    document.getElementById('editPersonEmail').value = person.email || '';
+    
+    document.getElementById('editSection').classList.remove('hidden');
+    window.scrollTo(0, 0);
+}
+
+function closeEdit() {
+    document.getElementById('editSection').classList.add('hidden');
+}
+
+async function updatePerson() {
+    const id = document.getElementById('editPersonId').value;
+    const name = document.getElementById('editPersonName').value;
+    const phone = document.getElementById('editPersonPhone').value;
+    const email = document.getElementById('editPersonEmail').value;
+
+    if (!name) return;
+
+    await fetch(`${API}/people/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email })
+    });
+
+    closeEdit();
+    fetchPeople();
+}
+
 async function exportToPDF() {
     if (!selectedPersonId) return;
 
@@ -158,9 +218,15 @@ async function exportToPDF() {
     doc.setFontSize(18);
     doc.text(`Extrato de Conta - ${selectedPersonName}`, 14, 22);
     
+    if (selectedPersonContact) {
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text(selectedPersonContact, 14, 28);
+    }
+    
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`AquiSePaga - Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
+    doc.text(`AquiSePaga - Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 34);
 
     let totalBalance = 0;
     const tableData = transactions.map(t => {
@@ -177,7 +243,7 @@ async function exportToPDF() {
 
     // Tabela
     doc.autoTable({
-        startY: 35,
+        startY: 40,
         head: [['Data', 'Tipo', 'Descrição', 'Valor']],
         body: tableData,
         headStyles: { fillColor: [99, 102, 241] }, // Cor primária do app

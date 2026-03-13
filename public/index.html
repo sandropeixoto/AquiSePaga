@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AquiSePaga - Gestão de Dívidas</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <!-- PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- IMask for Phone Masking -->
+    <script src="https://unpkg.com/imask"></script>
 </head>
 <body>
     <div class="container">
@@ -22,7 +24,11 @@
             <section class="card">
                 <h2>👤 Cadastrar Pessoa</h2>
                 <div class="row">
-                    <input type="text" id="personName" placeholder="Nome da pessoa">
+                    <input type="text" id="personName" placeholder="Nome Completo*">
+                </div>
+                <div class="row">
+                    <input type="text" id="personPhone" placeholder="WhatsApp (Opcional)">
+                    <input type="email" id="personEmail" placeholder="Email (Opcional)">
                     <button onclick="addPerson()">Adicionar</button>
                 </div>
             </section>
@@ -32,6 +38,23 @@
                 <h2>📊 Resumo de Saldos</h2>
                 <div id="peopleList" class="people-grid">
                     <!-- Gerado via JS -->
+                </div>
+            </section>
+
+            <!-- Edição de Pessoa (Modal-like) -->
+            <section id="editSection" class="card hidden">
+                <h2>✏️ Editar Cadastro</h2>
+                <input type="hidden" id="editPersonId">
+                <div class="row">
+                    <input type="text" id="editPersonName" placeholder="Nome Completo*">
+                </div>
+                <div class="row">
+                    <input type="text" id="editPersonPhone" placeholder="WhatsApp">
+                    <input type="email" id="editPersonEmail" placeholder="Email">
+                </div>
+                <div class="row">
+                    <button class="btn-success" onclick="updatePerson()">Salvar Alterações</button>
+                    <button class="btn-cancel" onclick="closeEdit()">Cancelar</button>
                 </div>
             </section>
 

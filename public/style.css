@@ -31,7 +31,8 @@ h1 { margin-bottom: 5px; color: var(--primary); }
     background: var(--card);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); /* Suavizado */
+    border: 1px solid #e2e8f0; /* Borda discreta adicionada */
     margin-bottom: 20px;
 }
 
@@ -66,6 +67,7 @@ button:hover { opacity: 0.9; }
 .btn-success { background: var(--success); }
 .btn-info { background: #0ea5e9; }
 .btn-pdf { background: #6366f1; border: 1px solid #4f46e5; }
+.btn-edit { background: #f59e0b; max-width: 40px; }
 .btn-cancel { background: #94a3b8; }
 
 .header-with-action {
@@ -85,14 +87,13 @@ button:hover { opacity: 0.9; }
     gap: 20px;
 }
 
-.person-card {
-    border: 1px solid #e2e8f0;
-    padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.person-card h3 { margin-bottom: 5px; }
+
+.contact-info {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 10px;
+    line-height: 1.2;
 }
 
 .balance {

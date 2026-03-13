@@ -19,7 +19,7 @@ const db = new sqlite3.Database(dbPath);
 // Listar todas as pessoas com seus saldos
 app.get('/api/people', (req, res) => {
     const query = `
-        SELECT p.id, p.name, 
+        SELECT p.id, p.name, p.phone, p.email,
         COALESCE(SUM(CASE WHEN t.type = 'debt' THEN t.amount ELSE -t.amount END), 0) as balance
         FROM people p
         LEFT JOIN transactions t ON p.id = t.person_id
@@ -33,13 +33,30 @@ app.get('/api/people', (req, res) => {
 
 // Cadastrar nova pessoa
 app.post('/api/people', (req, res) => {
-    const { name } = req.body;
+    const { name, phone, email } = req.body;
     if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
 
-    db.run(`INSERT INTO people (name) VALUES (?)`, [name], function(err) {
+    db.run(`INSERT INTO people (name, phone, email) VALUES (?, ?, ?)`, [name, phone, email], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ id: this.lastID, name });
+        res.status(201).json({ id: this.lastID, name, phone, email });
     });
+});
+
+// Atualizar pessoa existente
+app.put('/api/people/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, phone, email } = req.body;
+    
+    if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
+
+    db.run(
+        `UPDATE people SET name = ?, phone = ?, email = ? WHERE id = ?`,
+        [name, phone, email, id],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Atualizado com sucesso' });
+        }
+    );
 });
 
 // --- ROTAS DE TRANSAÇÕES ---

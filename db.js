@@ -17,6 +17,8 @@ function initDb() {
         db.run(`CREATE TABLE IF NOT EXISTS people (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
+            phone TEXT,
+            email TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) console.error('Erro ao criar tabela people:', err.message);
